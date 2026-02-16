@@ -60,6 +60,42 @@ class _CounterWidgetState extends State<CounterWidget> {
             activeColor: Colors.blue,
             inactiveColor: Colors.red,
           ),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _counter++; // Increment counter by 1
+                  });
+                },
+                child: const Text('+'),
+              ),
+
+              const SizedBox(height: 8),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    if(_counter>0) {
+                      _counter--;
+                    } // Decrement counter by 1
+                  });
+                },
+                child: const Text('-'),
+              ),
+
+              const SizedBox(height: 8),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _counter = 0; // Reset counter to 0
+                  });
+                },
+                child: const Text('Reset'),
+              ),
+            ],  
+          ),
         ],
       ),
     );
