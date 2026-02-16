@@ -40,11 +40,20 @@ class _CounterWidgetState extends State<CounterWidget> {
         children: [
           Center(
             child: Container(
-              color: Colors.blue,
+              decoration: BoxDecoration(
+                color: Colors.grey[350],
+                border: Border.all(color: Colors.blue, width: 5),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: const EdgeInsets.all(8),
               child: Text(
                 //displays the current number
                 '$_counter',
-                style: TextStyle(fontSize: 50.0),
+                style: _counter > 50
+                  ? TextStyle(fontSize: 50, color: Colors.green)
+                  : _counter == 0
+                    ? TextStyle(fontSize: 50, color: Colors.red)
+                    : TextStyle(fontSize: 50, color: Colors.black),
               ),
             ),
           ),
@@ -58,7 +67,7 @@ class _CounterWidgetState extends State<CounterWidget> {
               });
             },
             activeColor: Colors.blue,
-            inactiveColor: Colors.red,
+            inactiveColor: Colors.black,
           ),
           const SizedBox(height: 16),
           Row(
