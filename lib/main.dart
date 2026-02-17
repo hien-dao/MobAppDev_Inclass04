@@ -1,3 +1,4 @@
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -30,11 +31,28 @@ class _CounterWidgetState extends State<CounterWidget> {
   int _counter = 0;
   //controller for the text field
   TextEditingController textController = TextEditingController();
+  //confetti controller
+  late ConfettiController confettiController;
+
+  @override
+  void initState() {
+    super.initState();
+    confettiController = ConfettiController(duration: const Duration(seconds: 1));
+  }
 
   @override
   void dispose() {
     textController.dispose();
+    confettiController.dispose();
     super.dispose();
+  }
+
+  void checkForConfetti() {
+    if(_counter == 100) {
+      setState(() {
+        confettiController.play();
+      });
+    }
   }
 
   void updateCounterByText() {
@@ -58,6 +76,8 @@ class _CounterWidgetState extends State<CounterWidget> {
         _counter = value;
       });
     }
+
+    checkForConfetti();
   }
 
   @override
@@ -66,105 +86,131 @@ class _CounterWidgetState extends State<CounterWidget> {
       appBar: AppBar(
         title: const Text('Stateful Widget'),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      body: Stack(
+        alignment: Alignment.center,
         children: [
-          Center(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.grey[350],
-                border: Border.all(color: Colors.blue, width: 5),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              padding: const EdgeInsets.all(8),
-              child: Text(
-                //displays the current number
-                '$_counter',
-                style: _counter > 50
-                  ? TextStyle(fontSize: 50, color: Colors.green)
-                  : _counter == 0
-                    ? TextStyle(fontSize: 50, color: Colors.red)
-                    : TextStyle(fontSize: 50, color: Colors.black),
-              ),
-            ),
-          ),
-          Slider(
-            min: 0,
-            max: 100,
-            value: _counter.toDouble(),
-            onChanged: (double value) {
-              setState(() {
-                _counter = value.toInt();
-              });
-            },
-            activeColor: Colors.blue,
-            inactiveColor: Colors.black,
-          ),
-
-          const SizedBox(height: 16),
-          Row(
+          // UI
+          Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _counter++; // Increment counter by 1
-                  });
-                },
-                child: const Text('+'),
-              ),
-
-              const SizedBox(height: 8),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    if(_counter>0) {
-                      _counter--;
-                    } // Decrement counter by 1
-                  });
-                },
-                child: const Text('-'),
-              ),
-
-              const SizedBox(height: 8),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _counter = 0; // Reset counter to 0
-                  });
-                },
-                child: const Text('Reset'),
-              ),
-            ],  
-          ),
-
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: 250,
-                child: TextField(
-                  controller: textController,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Enter number from 0 to 100',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
+              Center(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[350],
+                    border: Border.all(color: Colors.blue, width: 5),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: const EdgeInsets.all(8),
+                  child: Text(
+                    //displays the current number
+                    '$_counter',
+                    style: _counter > 50
+                      ? TextStyle(fontSize: 50, color: Colors.green)
+                      : _counter == 0
+                        ? TextStyle(fontSize: 50, color: Colors.red)
+                        : TextStyle(fontSize: 50, color: Colors.black),
                   ),
                 ),
               ),
-
-              const SizedBox(width: 8),
-              ElevatedButton(
-                onPressed: updateCounterByText,
-                child: const Text('Set Value'),
+              Slider(
+                min: 0,
+                max: 100,
+                value: _counter.toDouble(),
+                onChanged: (double value) {
+                  setState(() {
+                    _counter = value.toInt();
+                  });
+                  checkForConfetti();
+                },
+                activeColor: Colors.blue,
+                inactiveColor: Colors.black,
               ),
-            ]      
-        ),
-        ],
-      ),
+
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        if(_counter < 100) {
+                          _counter++; // Increment counter by 1
+                        }
+                      });
+                      checkForConfetti();
+                    },
+                    child: const Text('+'),
+                  ),
+
+                  const SizedBox(height: 8),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        if(_counter>0) {
+                          _counter--;
+                        } // Decrement counter by 1
+                      });
+                      checkForConfetti();
+                    },
+                    child: const Text('-'),
+                  ),
+
+                  const SizedBox(height: 8),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _counter = 0; // Reset counter to 0
+                      });
+                      checkForConfetti();
+                    },
+                    child: const Text('Reset'),
+                  ),
+                ],  
+              ),
+
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 250,
+                    child: TextField(
+                      controller: textController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        labelText: 'Enter number from 0 to 100',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: updateCounterByText,
+                    child: const Text('Set Value'),
+                  ),
+                ]      
+            ),
+            ],
+          ),
+
+          // Confetti
+          ConfettiWidget(
+            confettiController: confettiController,
+            blastDirectionality: BlastDirectionality.explosive,
+            shouldLoop: false,
+            colors: const [
+              Colors.green,
+              Colors.blue,
+              Colors.pink,
+              Colors.orange,
+              Colors.purple
+            ],
+          ),
+        ]
+      )
     );
   }
 }
