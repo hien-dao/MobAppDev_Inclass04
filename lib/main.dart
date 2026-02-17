@@ -28,7 +28,38 @@ class CounterWidget extends StatefulWidget {
 class _CounterWidgetState extends State<CounterWidget> {
   //initial counter value
   int _counter = 0;
-  
+  //controller for the text field
+  TextEditingController textController = TextEditingController();
+
+  @override
+  void dispose() {
+    textController.dispose();
+    super.dispose();
+  }
+
+  void updateCounterByText() {
+    final text = textController.text;
+    final value = int.tryParse(text);
+
+    if (value == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter a number')),
+      );
+    } else if(value > 100) {
+       ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Limit Reached!')),
+      );
+    } else if(value < 0) {
+       ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Too Low!')),
+      );
+    } else {
+      setState(() {
+        _counter = value;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,6 +100,7 @@ class _CounterWidgetState extends State<CounterWidget> {
             activeColor: Colors.blue,
             inactiveColor: Colors.black,
           ),
+
           const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -105,6 +137,32 @@ class _CounterWidgetState extends State<CounterWidget> {
               ),
             ],  
           ),
+
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 250,
+                child: TextField(
+                  controller: textController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Enter number from 0 to 100',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(width: 8),
+              ElevatedButton(
+                onPressed: updateCounterByText,
+                child: const Text('Set Value'),
+              ),
+            ]      
+        ),
         ],
       ),
     );
